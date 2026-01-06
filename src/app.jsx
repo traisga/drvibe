@@ -24,7 +24,7 @@ import {
 
 /**
  * --- AYARLAR (CONFIG) ---
- * V1 Sürümü - Sadece Heuristik Analiz
+ * V1.1 Sürümü - Buton Düzeltmesi
  */
 const CONFIG = {
   // 1. Buy Me A Coffee Profil Linkin
@@ -40,7 +40,7 @@ const SCANNER_LOGS = [
   "Fetching repository skeleton...",
   "Recursively parsing file tree...",
   "Analyzing dependency footprint...",
-  "Scanning for security leaks (.env)...", // Eski adımlar geri geldi
+  "Scanning for security leaks (.env)...",
   "Calculating technical debt...",
   "Finalizing medical report..."
 ];
@@ -92,7 +92,6 @@ export default function VibeDoctor() {
       const files = treeData.tree || [];
       const fileCount = files.length;
       
-      // Kritik Dosya Kontrolleri
       const hasReadme = files.some(f => f.path.toLowerCase() === 'readme.md');
       const envFile = files.find(f => f.path.includes('.env') && !f.path.includes('example') && !f.path.includes('sample'));
       const hasNodeModules = files.some(f => f.path.includes('node_modules/'));
@@ -105,8 +104,6 @@ export default function VibeDoctor() {
       let summary = "";
 
       // --- SCORING LOGIC ---
-
-      // 1. Bloat & Size
       if (fileCount > 1000) {
         score -= 20;
         prescriptions.push({
@@ -129,7 +126,6 @@ export default function VibeDoctor() {
         });
       }
 
-      // 2. Fatal Errors (Node Modules)
       if (hasNodeModules) {
         score -= 30;
         prescriptions.push({
@@ -142,7 +138,6 @@ export default function VibeDoctor() {
         });
       }
 
-      // 3. Documentation
       if (!hasReadme) {
         score -= 25;
         prescriptions.push({
@@ -155,7 +150,6 @@ export default function VibeDoctor() {
         });
       }
 
-      // 4. Security
       if (envFile) {
         score -= 40;
         prescriptions.push({
@@ -168,7 +162,6 @@ export default function VibeDoctor() {
         });
       }
 
-      // 5. Hygiene
       if (!hasLockFile && (files.some(f => f.path === 'package.json'))) {
         score -= 10;
         prescriptions.push({
@@ -181,7 +174,6 @@ export default function VibeDoctor() {
         });
       }
 
-      // 6. Best Practices
       if (!hasTests && fileCount > 20) {
         score -= 5;
         prescriptions.push({
@@ -321,7 +313,7 @@ export default function VibeDoctor() {
 
       <div className="relative z-10 container mx-auto px-4 h-screen flex flex-col">
         
-        {/* Header */}
+        {/* Header - Fixed to include BuyMeACoffee Button */}
         <header className="flex justify-between items-center py-6 border-b border-slate-800/50">
           <div className="flex items-center gap-2 group cursor-pointer" onClick={() => setView('waiting')}>
             <div className="p-2 bg-slate-900 rounded-lg border border-slate-800 group-hover:border-emerald-500/50 transition-colors">
@@ -331,7 +323,19 @@ export default function VibeDoctor() {
               Vibe<span className="text-emerald-400">Doctor</span>
             </span>
           </div>
+          
           <div className="flex items-center gap-4 text-sm text-slate-400">
+             {/* HEADER BUTTON EKLEMESİ */}
+             <a 
+               href={CONFIG.buyMeACoffeeUrl} 
+               target="_blank" 
+               rel="noreferrer"
+               className="hidden md:flex items-center gap-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/50 px-3 py-1.5 rounded-lg text-xs font-bold transition-all hover:scale-105"
+             >
+               <Coffee className="w-3.5 h-3.5" /> 
+               <span>Buy me a coffee</span>
+             </a>
+
              {userToken && <span className="flex items-center gap-1 text-emerald-400 bg-emerald-950/30 px-2 py-0.5 rounded text-xs"><Key className="w-3 h-3" /> Pro Access</span>}
           </div>
         </header>
@@ -487,7 +491,7 @@ export default function VibeDoctor() {
                     <div className="mt-8 pt-6 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-slate-500 text-sm gap-4">
                        <div className="flex flex-col"><p>Chief Surgeon: Dr. Vibe, MD</p><p className="font-mono text-xs">Analysis via GitHub REST API</p></div>
                        
-                       {/* BUY ME A COFFEE BUTTON - Config'den okuyor */}
+                       {/* BUY ME A COFFEE BUTTON - Alt taraftaki (Büyük ve renkli) */}
                        <a href={CONFIG.buyMeACoffeeUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold py-2 px-4 rounded-lg hover:shadow-lg hover:shadow-orange-500/20 hover:scale-105 transition-all text-xs uppercase tracking-wide group"><Coffee className="w-4 h-4 group-hover:animate-bounce" /> Buy Dr. Vibe a Coffee</a>
                     </div>
                  </div>
